@@ -215,11 +215,17 @@ void DL_ProcessDrawList(int tag, boolean(*procfunc)(vtxlist_t*, int*)) {
             }
             else {
                 unsigned int flags = ((visspritelist_t*)head->data)->spr->flags;
+#ifdef ANDROID
+                unsigned int packed = (unsigned int)head->texid;
+
+                palette = (int)((packed >> 24) & 0xFF);
+                head->texid = (int)(packed & 0xFFFF);
+#else
                 unsigned int __packed = (unsigned int)head->texid;
 
                 palette = (int)((__packed >> 24) & 0xFF);
                 head->texid = (int)(__packed & 0xFFFF);
-
+#endif
                 GL_BindSpriteTexture(head->texid, palette);
 
                 dglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (int)(r_objectFilter.value == 0 && r_filter.value > 0) ? GL_LINEAR : GL_NEAREST);
