@@ -21,11 +21,6 @@
 
 #include <SDL3/SDL_opengl.h>
 
-#ifdef ANDROID
-#include <dlfcn.h>
-#include <stdlib.h>
-#endif
-
 #ifdef SDL_PLATFORM_MACOS
 #include <OpenGL/OpenGL.h>
 #endif
@@ -70,10 +65,6 @@ CVAR_EXTERNAL(r_anisotropic);
 CVAR_EXTERNAL(r_multisample);
 CVAR_EXTERNAL(st_flashoverlay);
 CVAR_EXTERNAL(r_colorscale);
-
-#ifdef ANDROID
-static void* openGLHandle = nullptr;
-#endif
 
 void GL_OnResize(int w, int h);
 
@@ -129,15 +120,7 @@ boolean GL_CheckExtension(const char *ext) {
 
 void* GL_RegisterProc(const char *address) {
 
-#ifdef ANDROID
-    if (openGLHandle == nullptr) {
-        openGLHandle = dlopen(getenv("SDL_VIDEO_GL_DRIVER"),
-                              RTLD_LAZY | RTLD_LOCAL);
-    }
-    void *proc = dlsym(openGLHandle, address);
-#else
     void *proc = SDL_GL_GetProcAddress(address);
-#endif
     if(!proc) {
         CON_Warnf("GL_RegisterProc: Failed to get proc address: %s", address);
         return NULL;
