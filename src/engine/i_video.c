@@ -191,6 +191,10 @@ void I_InitScreen(void) {
     int native_w = 0, native_h = 0;
     GetNativeDisplayPixels(&native_w, &native_h, window);
 
+#ifdef ANDROID
+    v_fullscreen.value = 1;
+#endif
+
     if ((int)v_fullscreen.value) {
         initial_w = native_w;
         initial_h = native_h;
