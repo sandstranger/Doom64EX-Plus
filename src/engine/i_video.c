@@ -207,7 +207,8 @@ void I_InitScreen(void) {
     usingGL = false;
 
     video_driver = SDL_GetCurrentVideoDriver();
-    
+
+#ifndef ANDROID
 #if defined __arm__ || defined __aarch64__ || defined __APPLE__ || defined __LEGACYGL__
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
@@ -220,6 +221,12 @@ void I_InitScreen(void) {
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
 #endif
+#else
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+#endif
+
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
@@ -228,13 +235,17 @@ void I_InitScreen(void) {
 #ifndef __APPLE__
     flags |= SDL_WINDOW_HIGH_PIXEL_DENSITY;
 #endif
-    
+
+#ifndef ANDROID
     if ((int)v_fullscreen.value) {
         flags |= SDL_WINDOW_FULLSCREEN;
     }
     else {
         flags |= SDL_WINDOW_RESIZABLE;
     }
+#else
+    flags |= SDL_WINDOW_FULLSCREEN;
+#endif
 
 #ifdef SDL_PLATFORM_WIN32
     setUseDXGISwapChainNVIDIA(flags & SDL_WINDOW_RESIZABLE);
@@ -244,15 +255,21 @@ void I_InitScreen(void) {
     if (window) { SDL_DestroyWindow(window); window = NULL; }
 
     sprintf(title, "Doom64EX-Plus compiled on: %s", version_date);
+#ifdef ANDROID
+    window = SDL_CreateWindow(title, 0, 0, flags);
+#else
     window = SDL_CreateWindow(title, initial_w, initial_h, flags);
+#endif
     if (!window) {
         I_Error("I_InitScreen: Failed to create window");
         return;
     }
 
+#ifndef ANDROID
     if (!(flags & SDL_WINDOW_FULLSCREEN)) {
         SDL_SetWindowBordered(window, true);
     }
+#endif
 
     if (flags & SDL_WINDOW_FULLSCREEN) {
         SDL_DisplayID displayid = SDL_GetDisplayForWindow(window);
