@@ -396,6 +396,9 @@ void I_InitVideo(void) {
 //
 
 void I_ToggleFullscreen(void) {
+#ifdef ANDROID
+    return;
+#endif
     if (!window) return;
 
     int native_w = 0, native_h = 0;
