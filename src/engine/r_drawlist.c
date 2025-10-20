@@ -228,11 +228,6 @@ void DL_ProcessDrawList(int tag, boolean(*procfunc)(vtxlist_t*, int*)) {
 #endif
                 GL_BindSpriteTexture(head->texid, palette);
 
-                dglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                    (int)(r_objectFilter.value == 0 && r_filter.value > 0) ? GL_LINEAR : GL_NEAREST);
-                dglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-                    (int)(r_objectFilter.value == 0 && r_filter.value > 0) ? GL_LINEAR : GL_NEAREST);
-
                 // change blend states for nightmare things
                 if (flags & MF_NIGHTMARE) {
                     if (!checkNightmare) {
@@ -262,8 +257,6 @@ void DL_ProcessDrawList(int tag, boolean(*procfunc)(vtxlist_t*, int*)) {
             }
 
             dglDrawGeometry(drawcount, drawVertex);
-
-            I_ShaderBind();
 
             // count vertex size
             if (devparm) {
