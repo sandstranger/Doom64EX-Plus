@@ -57,8 +57,6 @@ if (NOT ANDROID)
 	find_package(PNG REQUIRED)
 	find_package(OpenGL REQUIRED)
 	find_package(ZLIB REQUIRED)
-else ()
-	find_package(ZLIB REQUIRED)
 endif ()
 
 if (NOT ANDROID)
@@ -67,13 +65,6 @@ include_directories(
 	${OpenGL_INCLUDE_DIRS}
 	${FMOD_INC_DIR}
 )
-else ()
-	include_directories(
-			${libpng_INCLUDE_DIRS}
-			${OPENGL_INCLUDE_DIR}
-			${FMOD_INC_DIR}
-			${SDL3_INCLUDE_DIR}
-	)
 endif ()
 
 set(SOURCE_DIR "src/engine")
@@ -185,15 +176,4 @@ target_link_libraries(
 	z
 	m
 )
-else ()
-	target_link_libraries(
-			${PROJECT_NAME}
-			${SDL3_LIBRARY}
-			${libpng_LIBRARY}
-			${OPENGL_opengl_LIBRARY}
-			${FMOD_LIB}
-			z
-			m
-			log
-	)
 endif ()
