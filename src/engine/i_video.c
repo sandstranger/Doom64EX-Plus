@@ -193,11 +193,23 @@ void I_InitScreen(void) {
     int initial_w, initial_h;
 
     int native_w = 0, native_h = 0;
-    GetNativeDisplayPixels(&native_w, &native_h, window);
 
 #ifdef ANDROID
     v_fullscreen.value = 1;
+
+    char* screenWidthString = getenv("SCREEN_WIDTH");
+    char* screenHeightString = getenv("SCREEN_HEIGHT");
+
+    if (screenWidthString && strlen(screenWidthString)> 0 && screenHeightString && strlen(screenHeightString) >0){
+        native_w = atoi(screenWidthString);
+        native_h = atoi(screenHeightString);
+    } else{
+        GetNativeDisplayPixels(&native_w, &native_h, window);
+    }
+#else
+    GetNativeDisplayPixels(&native_w, &native_h, window);
 #endif
+    SDL_Log("SCREEN_RESOLUTION, SCREEN WIDTH = %d, SCREEN HEIGHT = %d", native_w, native_h);
 
     if ((int)v_fullscreen.value) {
         initial_w = native_w;
@@ -217,11 +229,11 @@ void I_InitScreen(void) {
     video_driver = SDL_GetCurrentVideoDriver();
 
 #ifndef ANDROID
-#if defined __arm__ || defined __aarch64__ || defined __APPLE__ || defined __LEGACYGL__
+    #if defined __arm__ || defined __aarch64__ || defined __APPLE__ || defined __LEGACYGL__
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 #else
-    
+
     if (!video_driver || !dstreq(video_driver, "wayland")) {
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
@@ -232,7 +244,7 @@ void I_InitScreen(void) {
 #else
     bool useLegacyOpenGLES2_0 = strcmp(getenv("LIBGL_ES"), "2") == 0;
     SDL_Log(useLegacyOpenGLES2_0 ? "Legacy OpenGL ES 2.0 is using for rendering" :
-    "OpenGL ES 3.2 is using for rendering");
+            "OpenGL ES 3.2 is using for rendering");
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, useLegacyOpenGLES2_0 ? 2 : 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, useLegacyOpenGLES2_0 ? 0 : 2);
@@ -382,13 +394,13 @@ void I_InitVideo(void) {
 
 #ifdef SDL_PLATFORM_LINUX
 
-	/*
+    /*
 	  On Wayland, this hint is needed for proper expected window size and scaling.
 	  Without this hint, on a 4K display with 2x desktop scaling, reported fullscreen window size
 	  would be 1920x1080 with SDL_GetDisplayContentScale() = 1 (instead of expected 3840x2160, SDL_GetDisplayContentScale() = 2
 	  Must be done before SDL_Init()
 	*/
-	
+
 	SDL_SetHintWithPriority(SDL_HINT_VIDEO_WAYLAND_SCALE_TO_DISPLAY, "1", SDL_HINT_OVERRIDE);
 
 #endif
@@ -406,16 +418,8 @@ void I_InitVideo(void) {
 // I_ToggleFullscreen
 //
 
-void I_ToggleFullscreen(void) {
-#ifdef ANDROID
-    return;
-#endif
+void RecalculateScreenResolution (int native_w, int native_h){
     if (!window) return;
-
-    int native_w = 0, native_h = 0;
-    GetNativeDisplayPixels(&native_w, &native_h, window);
-
-    v_fullscreen.value = v_fullscreen.value ? 0 : 1;
 
     if ((int)v_fullscreen.value) {
         SDL_DisplayID displayid = SDL_GetDisplayForWindow(window);
@@ -474,6 +478,17 @@ void I_ToggleFullscreen(void) {
     GL_OnResize(win_px_w, win_px_h);
 
     I_SetMenuCursorMouseRect();
+}
+
+void I_ToggleFullscreen(void) {
+#ifndef ANDROID
+    if (!window) return;
+
+    int native_w = 0, native_h = 0;
+    GetNativeDisplayPixels(&native_w, &native_h, window);
+    v_fullscreen.value = v_fullscreen.value ? 0 : 1;
+    RecalculateScreenResolution(native_w, native_h);
+#endif
 }
 
 //
