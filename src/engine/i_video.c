@@ -209,8 +209,6 @@ void I_InitScreen(void) {
 #else
     GetNativeDisplayPixels(&native_w, &native_h, window);
 #endif
-    SDL_Log("SCREEN_RESOLUTION, SCREEN WIDTH = %d, SCREEN HEIGHT = %d", native_w, native_h);
-
     if ((int)v_fullscreen.value) {
         initial_w = native_w;
         initial_h = native_h;
