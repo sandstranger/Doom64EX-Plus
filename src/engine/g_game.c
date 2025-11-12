@@ -661,6 +661,14 @@ void G_ReloadDefaults(void) {
 
 CVAR_EXTERNAL(p_autorun);
 
+#ifdef ANDROID
+static bool enableAutorun = false;
+
+void OnAutoRunStateChanged (bool isAutorunEnabled){
+    enableAutorun = isAutorunEnabled;
+}
+#endif
+
 //
 // G_BuildTiccmd
 // Builds a ticcmd from all of the available inputs
@@ -680,7 +688,11 @@ void G_BuildTiccmd(ticcmd_t* cmd) {
 
 	cmd->consistency = consistency[consoleplayer][maketic % BACKUPTICS];
 
-	if (pc->key[PCKEY_RUN]) {
+#ifdef ANDROID
+    if (pc->key[PCKEY_RUN] || enableAutorun) {
+#else
+    if (pc->key[PCKEY_RUN]) {
+#endif
 		speed = 1;
 	}
 	else {
