@@ -494,4 +494,8 @@ bool needToInvokeMouseButtonsEvents(){
     return menuactive || gamestate == GS_NONE || gamestate == GS_SKIPPABLE || demoplayback;
 }
 
+bool MouseCursorCanBeDrawn() {
+    return menuactive;
+}
+
 #endif
