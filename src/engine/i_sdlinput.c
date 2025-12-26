@@ -203,11 +203,13 @@ static SDL_INLINE void I_MouseRelease(int dx, int dy) {
 	D_PostEvent(&ev);
 }
 
+#if ANDROID
+char *virtualControllerGUID = nullptr;
+#endif
+
 static void I_GamepadInit(void) {
     SDL_UpdateGamepads();
 
-    const char* virtualControllerName = "Xbox Series X Controller";
-    const int virtualButtonsCount = 25;
     int virtualControllerIndex = -1;
     int jn = 0; SDL_JoystickID* jids = SDL_GetJoysticks(&jn);
 
@@ -215,16 +217,29 @@ static void I_GamepadInit(void) {
         return;
     }
 
-    for (int i = 0; i < jn; i++) {
-        SDL_Joystick *js = SDL_OpenJoystick(jids[i]);
-        const char* joystickName = SDL_GetJoystickName(js);
-        const int buttonsCount = SDL_GetNumJoystickButtons(js);
-        SDL_CloseJoystick(js);
-        if (virtualButtonsCount == buttonsCount && joystickName && strcmp(joystickName, virtualControllerName) == 0){
-            virtualControllerIndex = i;
-            break;
+#if ANDROID
+    if (virtualControllerGUID!= nullptr) {
+        for (int i = 0; i < jn; i++) {
+            SDL_Joystick *js = SDL_OpenJoystick(jids[i]);
+            if (js!= nullptr){
+                SDL_GUID guid = SDL_GetJoystickGUID(js);
+                SDL_CloseJoystick(js);
+                char guid_str[33];
+                for (int j = 0; j < 16; ++j) {
+                    int written = snprintf(&guid_str[j * 2], 3, "%02x", guid.data[j]);
+                    if (written != 2) {
+                        guid_str[0] = '\0';
+                        break;
+                    }
+                }
+                if (strcmp(guid_str, virtualControllerGUID) == 0) {
+                    virtualControllerIndex = i;
+                    break;
+                }
+            }
         }
     }
+#endif
     int n = 0; SDL_JoystickID* ids = SDL_GetGamepads(&n);
     if (ids && n > 0) {
         for (int i = 0; i < n; i++) {
@@ -311,7 +326,10 @@ static void RescanGameControllers (){
 }
 
 #if ANDROID
-void rescanGameControllersForced() {
+void rescanGameControllersForced(char *targetVirtualControllerGUID){
+    if (targetVirtualControllerGUID!= nullptr && strlen(targetVirtualControllerGUID) > 0 && virtualControllerGUID== nullptr){
+        virtualControllerGUID = strdup(targetVirtualControllerGUID);
+    }
     RescanGameControllers();
 }
 #endif
