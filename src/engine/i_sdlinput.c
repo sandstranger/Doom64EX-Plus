@@ -748,6 +748,11 @@ void I_GetEvent(SDL_Event* Event) {
 		D_PostEvent(&event);
 		break;
 
+        case SDL_EVENT_WINDOW_RESIZED:
+            extern void UpdateScreenResolution();
+            UpdateScreenResolution();
+            break;
+
 #ifndef ANDROID
 	case SDL_EVENT_WINDOW_FOCUS_GAINED:
 		window_focused = true;
