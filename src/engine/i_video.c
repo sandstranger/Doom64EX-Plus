@@ -417,7 +417,7 @@ void I_InitVideo(void) {
 //
 
 void RecalculateScreenResolution (int native_w, int native_h){
-    if (!window || (video_width == native_w && video_height == native_h)) return;
+    if (!window) return;
 
     if ((int)v_fullscreen.value) {
         SDL_DisplayID displayid = SDL_GetDisplayForWindow(window);
