@@ -115,9 +115,19 @@ extern gamestate_t gamestate;
 #if ANDROID
 extern float cursor_x;
 extern float cursor_y;
+typedef void (*forceLandScapeActivityOrientationDelegate)();
+static forceLandScapeActivityOrientationDelegate activityOrientationChangerInstance = nullptr;
 #endif
 
+
 static SDL_INLINE float I_GamepadClamp(float x) { return SDL_clamp(x, 0.f, 1.f); }
+
+#if ANDROID
+__attribute__((used)) __attribute__((visibility("default")))
+void registerForceLandscapeActivityOrientationCallback (forceLandScapeActivityOrientationDelegate instance) {
+    activityOrientationChangerInstance = instance;
+}
+#endif
 
 static void I_GamepadRadialLookSmoothing(float x, float y,
 	float inner_dz, float outer_dz,
@@ -315,6 +325,11 @@ void rescanGameControllersForced(){
 
 static void I_GamepadHandleSDLEvent(const SDL_Event* e) {
 	if (!gamepad64.init) return;
+#if ANDROID
+    if (e->type == SDL_EVENT_DID_ENTER_FOREGROUND && activityOrientationChangerInstance!= nullptr){
+        activityOrientationChangerInstance();
+    }
+#endif
 	switch (e->type) {
         case SDL_EVENT_GAMEPAD_ADDED:
         case SDL_EVENT_GAMEPAD_REMAPPED:
