@@ -325,11 +325,6 @@ void rescanGameControllersForced(){
 
 static void I_GamepadHandleSDLEvent(const SDL_Event* e) {
 	if (!gamepad64.init) return;
-#if ANDROID
-    if (e->type == SDL_EVENT_DID_ENTER_FOREGROUND && activityOrientationChangerInstance!= nullptr){
-        activityOrientationChangerInstance();
-    }
-#endif
 	switch (e->type) {
         case SDL_EVENT_GAMEPAD_ADDED:
         case SDL_EVENT_GAMEPAD_REMAPPED:
@@ -698,7 +693,14 @@ void I_GetEvent(SDL_Event* Event) {
 	unsigned int mwheeluptic = 0, mwheeldowntic = 0;
 	unsigned int tic = gametic;
 
-	I_GamepadHandleSDLEvent(Event);
+#if ANDROID
+    if (Event->type == SDL_EVENT_DID_ENTER_FOREGROUND && activityOrientationChangerInstance!= nullptr){
+        activityOrientationChangerInstance();
+    }
+#endif
+
+    I_GamepadHandleSDLEvent(Event);
+
 
 	switch (Event->type) {
 	case SDL_EVENT_KEY_DOWN:
