@@ -479,7 +479,11 @@ int main(int argc, char *argv[]) {
 #endif
 
 	D_DoomMain();
-
+#if ANDROID
+    freeChars(&g_pathToDoom64UserFolder);
+    freeChars(&g_pathToDoom64MainWadsFolder);
+    freeChars(&g_pathToSDLControllerDB);
+#endif
 	return 0;
 }
 
