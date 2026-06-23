@@ -60,7 +60,11 @@ const char *gl_version;
 static float glScaleFactor = 1.0f;
 
 boolean    usingGL = false;
+#ifndef ANDROID
 float       max_anisotropic = 16.0;
+#else
+float       max_anisotropic = 2.0f;
+#endif
 boolean    widescreen = false;
 
 CVAR_EXTERNAL(r_filter);
@@ -583,6 +587,12 @@ void GL_Init(void) {
 
     if(has_GL_EXT_texture_filter_anisotropic) {
         dglGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max_anisotropic);
+#ifdef ANDROID
+        static const float maxAnisotropyValue = 2.0f;
+        if (max_anisotropic > maxAnisotropyValue){
+            max_anisotropic = maxAnisotropyValue;
+        }
+#endif
     }
 
     usingGL = true;

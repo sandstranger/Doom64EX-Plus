@@ -26,6 +26,7 @@
 #else
 #include "glad.h"
 #include "AngleShaderCache.h"
+#include "SwappyController.h"
 #endif
 
 #ifdef SDL_PLATFORM_WIN32
@@ -265,7 +266,12 @@ void I_InitScreen(void) {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION,   0);
 #endif
 
+#ifndef ANDROID
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+#else
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+#endif
+    
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
     flags = SDL_WINDOW_OPENGL;
@@ -378,7 +384,13 @@ void I_InitScreen(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     SDL_ShowWindow(window);
+#if ANDROID
+    if (!SwappySwapBuffers()) {
+        SDL_GL_SwapWindow(window);
+    }
+#else
     SDL_GL_SwapWindow(window);
+#endif
     SDL_HideCursor();
 }
 
