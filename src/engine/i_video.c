@@ -266,12 +266,7 @@ void I_InitScreen(void) {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION,   0);
 #endif
 
-#ifndef ANDROID
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-#else
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
-#endif
-    
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
     flags = SDL_WINDOW_OPENGL;
