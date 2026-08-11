@@ -424,6 +424,10 @@ void I_ShutdownVideo(void) {
 // I_InitVideo
 //
 
+#ifdef ANDROID
+static bool AndroidLifeCycleEventFilter(void*, SDL_Event* event);
+#endif
+
 void I_InitVideo(void) {
 
 #ifdef SDL_PLATFORM_LINUX
@@ -443,7 +447,9 @@ void I_InitVideo(void) {
         I_Error("ERROR - Failed to initialize SDL");
         return;
     }
-
+#ifdef ANDROID
+    SDL_AddEventWatch(AndroidLifeCycleEventFilter, nullptr);
+#endif
     I_StartTic();
     I_InitScreen();
 }
@@ -516,6 +522,26 @@ void RecalculateScreenResolution (int native_w, int native_h){
 
     I_SetMenuCursorMouseRect();
 }
+
+#ifdef ANDROID
+extern void FMOD_PauseAll();
+extern void FMOD_ResumeAll();
+
+static bool AndroidLifeCycleEventFilter(void*, SDL_Event* event){
+    switch (event->type)
+    {
+        case SDL_EVENT_WILL_ENTER_BACKGROUND:
+            FMOD_PauseAll();
+            window_focused = false;
+            break;
+        case SDL_EVENT_DID_ENTER_FOREGROUND:
+            FMOD_ResumeAll();
+            window_focused = true;
+            break;
+    }
+    return true;
+}
+#endif
 
 void I_ToggleFullscreen(void) {
 #ifndef ANDROID
