@@ -48,6 +48,7 @@
 
 SDL_Window* window = NULL;
 SDL_GLContext   glContext = NULL;
+static bool gladWasLoaded = false;
 
 CVAR(r_trishader, 1);
 CVAR(v_checkratio, 0);
@@ -360,6 +361,7 @@ void I_InitScreen(void) {
         SDL_Quit();
         return;
     }
+    gladWasLoaded = true;
 #endif
 
     SDL_GetWindowSizeInPixels(window, &win_px_w, &win_px_h);
@@ -451,7 +453,7 @@ void I_InitVideo(void) {
 //
 
 void RecalculateScreenResolution (int native_w, int native_h){
-    if (!window) return;
+    if (!window || !gladWasLoaded) return;
 #if ANDROID
     video_width = native_w;
     video_height = native_h;
