@@ -526,4 +526,7 @@ void setPathToSDLControllerDB (const char *pathToSDLControllerDB){
     freeChars(&g_pathToSDLControllerDB);
     g_pathToSDLControllerDB = strdup(pathToSDLControllerDB);
 }
+__attribute__((used)) __attribute__((visibility("default")))
+void updateOnScreenControlsState(const bool enabled) {
+}
 #endif
