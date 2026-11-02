@@ -124,7 +124,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libpng16.lib;zlib.lib;SDL3.lib;nvapi64.lib;fmod_vc.lib;opengl32.lib;wsock32.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libpng16.lib;zlib.lib;SDL3.lib;nvapi64.lib;fmod_vc.lib;opengl32.lib;ws2_32.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)\SDL3-3.2.24\lib\x64;C:\vcpkg\packages\libpng_x64-windows\lib;C:\vcpkg\packages\zlib_x64-windows\lib;C:\Program Files %28x86%29\FMOD SoundSystem\FMOD Studio API Windows\api\core\lib\x64;$(ProjectDir)..\thirdparty\Libs\x64</AdditionalLibraryDirectories>
       <GenerateMapFile>true</GenerateMapFile>
       <MapExports>true</MapExports>
@@ -154,7 +154,7 @@ copy ..\doom64ex-plus.wad $(OutputPath)</Command>
       <EnableCOMDATFolding>false</EnableCOMDATFolding>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)\SDL3-3.2.24\lib\x64;C:\vcpkg\packages\libpng_x64-windows\lib;C:\vcpkg\packages\zlib_x64-windows\lib;C:\Program Files %28x86%29\FMOD SoundSystem\FMOD Studio API Windows\api\core\lib\x64;$(ProjectDir)..\thirdparty\Libs\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libpng16.lib;zlib.lib;SDL3.lib;nvapi64.lib;fmod_vc.lib;opengl32.lib;wsock32.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libpng16.lib;zlib.lib;SDL3.lib;nvapi64.lib;fmod_vc.lib;opengl32.lib;ws2_32.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
       <LinkErrorReporting>NoErrorReport</LinkErrorReporting>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
@@ -213,6 +213,7 @@ copy ..\doom64ex-plus.wad $(OutputPath)</Command>
     <ClCompile Include="..\src\engine\net_query.c" />
     <ClCompile Include="..\src\engine\net_server.c" />
     <ClCompile Include="..\src\engine\net_structure.c" />
+    <ClCompile Include="..\src\engine\net_udp.c" />
     <ClCompile Include="..\src\engine\p_ceilng.c" />
     <ClCompile Include="..\src\engine\p_doors.c" />
     <ClCompile Include="..\src\engine\p_enemy.c" />
@@ -309,6 +310,7 @@ copy ..\doom64ex-plus.wad $(OutputPath)</Command>
     <ClInclude Include="..\src\engine\net_query.h" />
     <ClInclude Include="..\src\engine\net_server.h" />
     <ClInclude Include="..\src\engine\net_structure.h" />
+    <ClInclude Include="..\src\engine\net_udp.h" />
     <ClInclude Include="..\src\engine\p_inter.h" />
     <ClInclude Include="..\src\engine\p_local.h" />
     <ClInclude Include="..\src\engine\p_macros.h" />

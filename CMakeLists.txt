@@ -94,6 +94,7 @@ add_executable(
 	${SOURCE_DIR}/net_query.c
 	${SOURCE_DIR}/net_server.c
 	${SOURCE_DIR}/net_structure.c
+	${SOURCE_DIR}/net_udp.c
 	${SOURCE_DIR}/dgl.c
 	${SOURCE_DIR}/gl_draw.c
 	${SOURCE_DIR}/gl_main.c
