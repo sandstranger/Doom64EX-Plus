@@ -144,7 +144,7 @@ copy ..\doom64ex-plus.wad $(OutputPath)</Command>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Program Files %28x86%29\FMOD SoundSystem\FMOD Studio API Windows\api\core\inc;$(ProjectDir)\SDL3-3.2.24\include;C:\vcpkg\packages\zlib_x64-windows\include;C:\vcpkg\packages\libpng_x64-windows\include;$(ProjectDir)..\thirdparty\Includes</AdditionalIncludeDirectories>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <Optimization>Disabled</Optimization>
+      <Optimization>MaxSpeed</Optimization>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
