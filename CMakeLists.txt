@@ -160,6 +160,7 @@ SET(SOURCES ${SOURCE_DIR}/i_system.c
 		${SOURCE_DIR}/p_mapinfo.c
 		${SOURCE_DIR}/i_shaders.c
 		${SOURCE_DIR}/i_sectorcombiner.c
+		${SOURCE_DIR}/net_udp.c		
 )
 
 if (NOT ANDROID)
