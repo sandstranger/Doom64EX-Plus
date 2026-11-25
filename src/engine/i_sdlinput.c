@@ -301,11 +301,12 @@ static void I_GamepadInitOnce(void) {
 
 #ifdef ANDROID
     extern char *g_pathToSDLControllerDB;
+    const char *pathToSDLControllerDB = __atomic_load_n(&g_pathToSDLControllerDB, __ATOMIC_ACQUIRE);  // (set on the java side's thread)
 
-    if (SDL_AddGamepadMappingsFromFile(g_pathToSDLControllerDB) < 0) {
+    if (!pathToSDLControllerDB || SDL_AddGamepadMappingsFromFile(pathToSDLControllerDB) < 0) {
         SDL_Log("Couldn't load mappings: %s\n", SDL_GetError());
     } else{
-        SDL_Log("Custom controller db was loaded from: %s", g_pathToSDLControllerDB);
+        SDL_Log("Custom controller db was loaded from: %s", pathToSDLControllerDB);
     }
 #endif
 
@@ -779,6 +780,16 @@ void I_GetEvent(SDL_Event* Event) {
 	case SDL_EVENT_WINDOW_FOCUS_LOST:
 		window_focused = false;
 		break;
+#else
+	// The lifecycle event watch (AndroidLifeCycleEventFilter) sees these first, on the java side's thread: window_focused is
+	// the game's, so it follows them here, on the game's thread
+	case SDL_EVENT_WILL_ENTER_BACKGROUND:
+		window_focused = false;
+		break;
+
+	case SDL_EVENT_DID_ENTER_FOREGROUND:
+		window_focused = true;
+		break;
 #endif
 	case SDL_EVENT_WINDOW_MOUSE_ENTER:
 		window_mouse = true;
@@ -835,6 +846,13 @@ int I_ShutdownWait(void) {
 
 void I_StartTic(void) {
 	SDL_Event Event;
+
+#ifdef ANDROID
+	{
+		void I_UpdateJavaQueries(void);
+		I_UpdateJavaQueries();
+	}
+#endif
 
 	while (SDL_PollEvent(&Event)) {
 		I_GetEvent(&Event);
